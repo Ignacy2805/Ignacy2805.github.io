@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strona Ignacego</title>
+    <style>
+        /* Reset podstawowych marginesów */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: black;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Tło z Matrixem */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Niebieski panel na środku */
+        .panel {
+            position: relative;
+            z-index: 2;
+            width: 90%;
+            max-width: 900px;
+            height: 80%;
+            max-height: 500px;
+            /* Gradient od jasnego błękitu do ciemnego niebieskiego */
+            background: linear-gradient(135deg, #4ecdc4, #1a5f7a, #002244);
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+        }
+
+        p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Miejsce na animację Matrixa -->
+    <canvas id="matrix"></canvas>
+
+    <!-- Główny panel strony -->
+    <div class="panel">
+        <h1>Witaj na mojej stronie!</h1>
+        <p>Strona działa i wygląda dokładnie tak, jak chciałeś.</p>
+    </div>
+
+    <!-- Skrypt odpowiedzialny za spadający kod binarny -->
+    <script>
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        // Dopasowanie rozmiaru canvas do okna przeglądarki
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Znaki do wyświetlenia (tylko kod binarny: 0 i 1)
+        const alphabet = "01";
+        const fontSize = 16;
+        
+        // Obliczanie liczby kolumn
+        let columns = canvas.width / fontSize;
+        let rainDrops = [];
+
+        // Inicjalizacja pozycji startowych dla każdej kolumny
+        for (let x = 0; x < columns; x++) {
+            rainDrops[x] = 1;
+        }
+
+        // Rysowanie animacji
+        function draw() {
+            // Czarna półprzezroczysta warstwa tworząca efekt "smugi" za znakami
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Kolor kodu z Matrixa (jasny zielony)
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < rainDrops.length; i++) {
+                // Losowy wybór 0 lub 1
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                
+                // Wypisanie znaku na ekranie
+                const x = i * fontSize;
+                const y = rainDrops[i] * fontSize;
+                ctx.fillText(text, x, y);
+
+                // Reset kolumny, gdy dotrze do dołu ekranu (z losowym opóźnieniem)
+                if (y > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                
+                // Przesunięcie znaku w dół
+                rainDrops[i]++;
+            }
+        }
+
+        // Aktualizacja płynności animacji (klatki na sekundę)
+        setInterval(draw, 30);
+    </script>
+</body>
+</html>
