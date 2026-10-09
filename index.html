@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Strona Ignacego</title>
     <style>
-        /* Reset podstawowych marginesów */
+        /* Podstawowy reset i ustawienia tła */
         * {
             margin: 0;
             padding: 0;
@@ -16,14 +16,14 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: black;
-            font-family: sans-serif;
+            background-color: #000;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        /* Tło z Matrixem */
+        /* Animowany deszcz Matrixa w tle */
         canvas {
             position: absolute;
             top: 0;
@@ -33,106 +33,240 @@
             z-index: 1;
         }
 
-        /* Niebieski panel na środku */
-        .panel {
+        /* Niebieski panel centralny wzorowany na Twoim projekcie */
+        .container {
             position: relative;
             z-index: 2;
             width: 90%;
-            max-width: 900px;
+            max-width: 850px;
             height: 80%;
-            max-height: 500px;
-            /* Gradient od jasnego błękitu do ciemnego niebieskiego */
-            background: linear-gradient(135deg, #4ecdc4, #1a5f7a, #002244);
-            border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            max-height: 480px;
+            background: linear-gradient(135deg, #4d66f0, #283cb3);
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
             padding: 40px;
-            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Układ górnego paska z elementami */
+        .top-row {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Nowoczesny styl kafelków / przycisków */
+        .btn, .clock-tile {
+            flex: 1;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-radius: 14px;
+            color: #ffffff;
+            font-size: 1.05rem;
+            font-weight: 600;
+            text-decoration: none;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             text-align: center;
         }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+        /* Efekty najechania dla przycisków interaktywnych */
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: #ffffff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            transform: translateY(-3px);
         }
 
-        p {
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Dynamiczny zegar i data */
+        .clock-tile {
+            cursor: default;
+            font-weight: 500;
+        }
+
+        #time {
             font-size: 1.2rem;
-            opacity: 0.9;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        #date {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+
+        /* Napis na dole panelu */
+        .footer-text {
+            color: #ffffff;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 40px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Instrukcja wyjścia w trybie Fullscreen */
+        #exit-tip {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            background: rgba(0, 0, 0, 0.7);
+            color: #0f0;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: monospace;
+            border: 1px solid #0f0;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
     </style>
 </head>
 <body>
 
-    <!-- Miejsce na animację Matrixa -->
     <canvas id="matrix"></canvas>
+    <div id="exit-tip">Naciśnij ESC, aby wyjść z trybu Matrix</div>
 
-    <!-- Główny panel strony -->
-    <div class="panel">
-        <h1>Witaj na mojej stronie!</h1>
-        <p>Strona działa i wygląda dokładnie tak, jak chciałeś.</p>
+    <div class="container" id="main-panel">
+        <div class="top-row">
+            <!-- Przycisk GitHub -->
+            <a href="https://github.com/Ignacy2805" target="_blank" class="btn">github</a>
+            
+            <!-- Przycisk Pełnego Ekranu -->
+            <button class="btn" onclick="goFullscreen()">matrix (fullscreen)</button>
+            
+            <!-- Kafelek czasu i daty -->
+            <div class="clock-tile">
+                <div id="time">00:00:00</div>
+                <div id="date">01.01.2026</div>
+            </div>
+        </div>
+
+        <!-- Dolny napis zgodnie ze szkicem -->
+        <div class="footer-text">więcej pojawi się wkrótce</div>
     </div>
 
-    <!-- Skrypt odpowiedzialny za spadający kod binarny -->
     <script>
-        const canvas = document.getElementById('matrix');
-        const ctx = canvas.getContext('2d');
-
-        // Dopasowanie rozmiaru canvas do okna przeglądarki
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        // --- 1. OBSŁUGA ZEGARA I DATY ---
+        function updateClock() {
+            const now = new Date();
+            
+            // Formatowanie czasu (hh:mm:ss)
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('time').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // Formatowanie daty (dd.mm.yyyy)
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            document.getElementById('date').textContent = `${day}.${month}.${year}`;
         }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+        setInterval(updateClock, 1000);
+        updateClock(); // Wywołanie natychmiastowe na start
 
-        // Znaki do wyświetlenia (tylko kod binarny: 0 i 1)
-        const alphabet = "01";
-        const fontSize = 16;
-        
-        // Obliczanie liczby kolumn
-        let columns = canvas.width / fontSize;
-        let rainDrops = [];
+        // --- 2. OBSŁUGA PEŁNEGO EKRANU (FULLSCREEN) ---
+        const panel = document.getElementById('main-panel');
+        const tip = document.getElementById('exit-tip');
 
-        // Inicjalizacja pozycji startowych dla każdej kolumny
-        for (let x = 0; x < columns; x++) {
-            rainDrops[x] = 1;
-        }
-
-        // Rysowanie animacji
-        function draw() {
-            // Czarna półprzezroczysta warstwa tworząca efekt "smugi" za znakami
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Kolor kodu z Matrixa (jasny zielony)
-            ctx.fillStyle = '#0F0';
-            ctx.font = fontSize + 'px monospace';
-
-            for (let i = 0; i < rainDrops.length; i++) {
-                // Losowy wybór 0 lub 1
-                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-                
-                // Wypisanie znaku na ekranie
-                const x = i * fontSize;
-                const y = rainDrops[i] * fontSize;
-                ctx.fillText(text, x, y);
-
-                // Reset kolumny, gdy dotrze do dołu ekranu (z losowym opóźnieniem)
-                if (y > canvas.height && Math.random() > 0.975) {
-                    rainDrops[i] = 0;
-                }
-                
-                // Przesunięcie znaku w dół
-                rainDrops[i]++;
+        function goFullscreen() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) { /* Firefox */
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) { /* IE/Edge */
+                document.documentElement.msRequestFullscreen();
             }
         }
 
-        // Aktualizacja płynności animacji (klatki na sekundę)
+        // Nasłuchiwanie zmiany stanu fullscreen
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+        function handleFullscreenChange() {
+            if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+                // Tryb pełnoekranowy aktywny: ukryj niebieski panel, pokaż wskazówkę wyjścia
+                panel.style.opacity = '0';
+                panel.style.pointerEvents = 'none';
+                tip.style.opacity = '1';
+                // Ukryj podpowiedź automatycznie po 3 sekundach
+                setTimeout(() => { tip.style.opacity = '0'; }, 3000);
+            } else {
+                // Powrót z pełnego ekranu (np. przez klawisz ESC)
+                panel.style.opacity = '1';
+                panel.style.pointerEvents = 'auto';
+                tip.style.opacity = '0';
+            }
+        }
+
+        // --- 3. ANIMACJA MATRIX (KOD BINARNY) ---
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Ponowne przeliczenie kolumn przy zmianie rozmiaru okna
+            columns = canvas.width / fontSize;
+            rainDrops = [];
+            for (let x = 0; x < columns; x++) {
+                rainDrops[x] = Math.random() * -100; // losowy start, żeby linie nie spadały równo
+            }
+        }
+
+        const alphabet = "01";
+        const fontSize = 16;
+        let columns = 0;
+        let rainDrops = [];
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#00ff33'; // wyrazisty zielony neonowy kolor Matrixa
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                const x = i * fontSize;
+                const y = rainDrops[i] * fontSize;
+
+                ctx.fillText(text, x, y);
+
+                if (y > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        }
         setInterval(draw, 30);
     </script>
 </body>
