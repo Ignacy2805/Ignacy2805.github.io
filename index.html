@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ignacy</title>
+    <title>Strona Ignacego</title>
     <style>
         /* Podstawowy reset i ustawienia tła */
         * {
@@ -40,7 +40,7 @@
             width: 95%;
             max-width: 850px;
             height: 85%;
-            max-height: 540px;
+            max-height: 560px;
             background: linear-gradient(135deg, #4d66f0, #283cb3);
             border-radius: 20px;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
@@ -61,11 +61,11 @@
             gap: 20px;
         }
 
-        /* Przyciski i zegar u góry - przywrócone do koloru NIEBIESKIEGO */
+        /* Przyciski i zegar u góry - niebieskie */
         .btn, .clock-tile {
             flex: 1;
             height: 70px;
-            background: rgba(255, 255, 255, 0.1); /* Klasyczne niebieskawe, półprzezroczyste tło */
+            background: rgba(255, 255, 255, 0.1);
             border: 2px solid rgba(255, 255, 255, 0.25);
             border-radius: 14px;
             color: #ffffff;
@@ -82,7 +82,7 @@
             text-align: center;
         }
 
-        /* Efekty najechania dla niebieskich przycisków interaktywnych */
+        /* Efekty najechania dla niebieskich przycisków */
         .btn:hover {
             background: rgba(255, 255, 255, 0.25);
             border-color: #ffffff;
@@ -94,7 +94,7 @@
             transform: translateY(0);
         }
 
-        /* Zegar i data u góry */
+        /* Zegar i data */
         .clock-tile {
             cursor: default;
             font-weight: 500;
@@ -120,6 +120,20 @@
             align-items: center;
         }
 
+        /* CAŁY MODUŁ ŚWIĄTECZNY - CZERWONE WYPEŁNIENIE I CZERWONA RAMA */
+        .countdown-red-box {
+            width: 100%;
+            background: #4a0000; /* Ciemnoczerwone pełne tło zamiast niebieskiego */
+            border: 4px solid #ff1a1a; /* Gruba, jasnoczerwona rama */
+            border-radius: 18px;
+            padding: 20px 20px 25px 20px;
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Napis przeniesiony do wnętrza ramy */
         .countdown-title {
             color: #ffffff;
             font-size: 1.1rem;
@@ -127,18 +141,9 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-bottom: 20px;
-            opacity: 0.9;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        /* MODUŁ ŚWIĄTECZNY - DUŻA CZERWONA RAMA */
-        .countdown-red-box {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.15);
-            border: 4px solid #ff1a1a; /* Wyrazista duża czerwona rama */
-            border-radius: 18px;
-            padding: 25px 20px;
-            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.15);
+            opacity: 0.95;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            text-align: center;
         }
 
         .countdown-container {
@@ -149,15 +154,15 @@
             flex-wrap: wrap;
         }
 
-        /* Kafelki odliczania - CZERWONE i CIEMNIEJSZE */
+        /* Małe kafelki odliczania - jeszcze ciemniejszy czerwony dla kontrastu */
         .countdown-box {
-            background: rgba(100, 0, 0, 0.8); /* Głęboki, ciemny czerwony */
+            background: rgba(40, 0, 0, 0.7); 
             border: 1px solid rgba(255, 77, 77, 0.4);
             border-radius: 12px;
             padding: 15px 10px;
             min-width: 100px;
             text-align: center;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.4);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
         }
 
         .countdown-value {
@@ -169,7 +174,7 @@
         }
 
         .countdown-label {
-            color: rgba(255, 180, 180, 0.85); /* Czytelne napisy w odcieniu jasnoczerwonym */
+            color: rgba(255, 190, 190, 0.9);
             font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
@@ -212,10 +217,10 @@
         </div>
 
         <div class="countdown-section">
-            <div class="countdown-title">Do Świąt Bożego Narodzenia pozostało:</div>
             
-            <!-- MODUŁ ŚWIĄTECZNY W CZERWONEJ RAMIE -->
+            <!-- MODUŁ ŚWIĄTECZNY - TERAZ ZAWIERA NAPIS I MA CZERWONE TŁO -->
             <div class="countdown-red-box">
+                <div class="countdown-title">Do Świąt Bożego Narodzenia pozostało:</div>
                 <div class="countdown-container">
                     <div class="countdown-box">
                         <div class="countdown-value" id="cd-months">00</div>
@@ -264,45 +269,57 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // --- 2. OBSŁUGA ODNLICZANIA ŚWIĄTECZNEGO ---
+        // --- 2. NOWA POPRAWIONA LOGIKA ODNLICZANIA KALENDARZOWEGO ---
         function updateChristmasCountdown() {
             const now = new Date();
             let currentYear = now.getFullYear();
             
-            let christmasTarget = new Date(currentYear, 11, 25, 0, 0, 0);
-            
-            if (now > christmasTarget) {
-                christmasTarget = new Date(currentYear + 1, 11, 25, 0, 0, 0);
+            let target = new Date(currentYear, 11, 25, 0, 0, 0);
+            if (now > target) {
+                target = new Date(currentYear + 1, 11, 25, 0, 0, 0);
             }
             
-            const diffInMs = christmasTarget - now;
+            // Obliczanie różnicy w miesiącach kalendarzowych
+            let months = (target.getFullYear() - now.getFullYear()) * 12 + (target.getMonth() - now.getMonth());
+            
+            // Tworzymy datę testową przesuniętą o wyliczoną liczbę pełnych miesięcy
+            let testDate = new Date(now.getTime());
+            testDate.setMonth(testDate.getMonth() + months);
+            
+            // Jeśli przesunęliśmy się za daleko, cofamy o jeden miesiąc
+            if (testDate > target) {
+                months--;
+                testDate = new Date(now.getTime());
+                testDate.setMonth(testDate.getMonth() + months);
+            }
+            
+            // Pozostały czas po odjęciu pełnych miesięcy kalendarzowych
+            let diff = target - testDate;
             
             const msInSecond = 1000;
             const msInMinute = msInSecond * 60;
             const msInHour = msInMinute * 60;
             const msInDay = msInHour * 24;
             const msInWeek = msInDay * 7;
-            const msInMonth = msInDay * 30.436875; 
             
-            let remainder = diffInMs;
+            // Wyliczanie pełnych tygodni z reszty
+            const weeks = Math.floor(diff / msInWeek);
+            diff %= msInWeek;
             
-            const months = Math.floor(remainder / msInMonth);
-            remainder %= msInMonth;
+            // Wyliczanie pełnych dni z reszty
+            const days = Math.floor(diff / msInDay);
+            diff %= msInDay;
             
-            const weeks = Math.floor(remainder / msInWeek);
-            remainder %= msInWeek;
+            // Wyliczanie godzin, minut i sekund
+            const hours = Math.floor(diff / msInHour);
+            diff %= msInHour;
             
-            const days = Math.floor(remainder / msInDay);
-            remainder %= msInDay;
+            const minutes = Math.floor(diff / msInMinute);
+            diff %= msInMinute;
             
-            const hours = Math.floor(remainder / msInHour);
-            remainder %= msInHour;
+            const seconds = Math.floor(diff / msInSecond);
             
-            const minutes = Math.floor(remainder / msInMinute);
-            remainder %= msInMinute;
-            
-            const seconds = Math.floor(remainder / msInSecond);
-            
+            // Wstrzyknięcie poprawnych wartości do struktury strony
             document.getElementById('cd-months').textContent = String(months).padStart(2, '0');
             document.getElementById('cd-weeks').textContent = String(weeks).padStart(2, '0');
             document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
