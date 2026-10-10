@@ -33,14 +33,14 @@
             z-index: 1;
         }
 
-        /* Niebieski panel centralny wzorowany na Twoim projekcie */
+        /* Niebieski panel centralny */
         .container {
             position: relative;
             z-index: 2;
-            width: 90%;
+            width: 95%;
             max-width: 850px;
-            height: 80%;
-            max-height: 480px;
+            height: 85%;
+            max-height: 520px;
             background: linear-gradient(135deg, #4d66f0, #283cb3);
             border-radius: 20px;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
@@ -112,14 +112,58 @@
             margin-top: 2px;
         }
 
-        /* Napis na dole panelu */
-        .footer-text {
+        /* Sekcja Wielkiego Odliczania Świątecznego */
+        .countdown-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .countdown-title {
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+            opacity: 0.9;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .countdown-box {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 15px 10px;
+            min-width: 100px;
+            text-align: center;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .countdown-value {
             color: #ffffff;
             font-size: 2.2rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            margin-bottom: 40px;
-            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .countdown-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            margin-top: 5px;
+            letter-spacing: 0.5px;
         }
 
         /* Instrukcja wyjścia w trybie Fullscreen */
@@ -148,60 +192,127 @@
 
     <div class="container" id="main-panel">
         <div class="top-row">
-            <!-- Przycisk GitHub -->
-            <a href="https://github.com/Ignacy2805" target="_blank" class="btn">github</a>
-            
-            <!-- Przycisk Pełnego Ekranu -->
+            <a href="https://github.com" target="_blank" class="btn">github</a>
             <button class="btn" onclick="goFullscreen()">matrix (fullscreen)</button>
-            
-            <!-- Kafelek czasu i daty -->
             <div class="clock-tile">
                 <div id="time">00:00:00</div>
                 <div id="date">01.01.2026</div>
             </div>
         </div>
 
-        <!-- Dolny napis zgodnie ze szkicem -->
-        <div class="footer-text">więcej pojawi się wkrótce</div>
+        <div class="countdown-section">
+            <div class="countdown-title">Do Świąt Bożego Narodzenia pozostało:</div>
+            <div class="countdown-container">
+                <div class="countdown-box">
+                    <div class="countdown-value" id="cd-months">00</div>
+                    <div class="countdown-label">Miesięcy</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-value" id="cd-weeks">00</div>
+                    <div class="countdown-label">Tygodni</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-value" id="cd-days">00</div>
+                    <div class="countdown-label">Dni</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-value" id="cd-hours">00</div>
+                    <div class="countdown-label">Godzin</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-value" id="cd-minutes">00</div>
+                    <div class="countdown-label">Minut</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-value" id="cd-seconds">00</div>
+                    <div class="countdown-label">Sekund</div>
+                </div>
+            </div>
+        </div>
     </div>
-
     <script>
         // --- 1. OBSŁUGA ZEGARA I DATY ---
         function updateClock() {
             const now = new Date();
             
-            // Formatowanie czasu (hh:mm:ss)
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
             document.getElementById('time').textContent = `${hours}:${minutes}:${seconds}`;
             
-            // Formatowanie daty (dd.mm.yyyy)
             const day = String(now.getDate()).padStart(2, '0');
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const year = now.getFullYear();
             document.getElementById('date').textContent = `${day}.${month}.${year}`;
         }
         setInterval(updateClock, 1000);
-        updateClock(); // Wywołanie natychmiastowe na start
+        updateClock();
 
-        // --- 2. OBSŁUGA PEŁNEGO EKRANU (FULLSCREEN) ---
+        // --- 2. OBSŁUGA ODNLICZANIA ŚWIĄTECZNEGO ---
+        function updateChristmasCountdown() {
+            const now = new Date();
+            let currentYear = now.getFullYear();
+            
+            let christmasTarget = new Date(currentYear, 11, 25, 0, 0, 0);
+            
+            if (now > christmasTarget) {
+                christmasTarget = new Date(currentYear + 1, 11, 25, 0, 0, 0);
+            }
+            
+            const diffInMs = christmasTarget - now;
+            
+            const msInSecond = 1000;
+            const msInMinute = msInSecond * 60;
+            const msInHour = msInMinute * 60;
+            const msInDay = msInHour * 24;
+            const msInWeek = msInDay * 7;
+            const msInMonth = msInDay * 30.436875; 
+            
+            let remainder = diffInMs;
+            
+            const months = Math.floor(remainder / msInMonth);
+            remainder %= msInMonth;
+            
+            const weeks = Math.floor(remainder / msInWeek);
+            remainder %= msInWeek;
+            
+            const days = Math.floor(remainder / msInDay);
+            remainder %= msInDay;
+            
+            const hours = Math.floor(remainder / msInHour);
+            remainder %= msInHour;
+            
+            const minutes = Math.floor(remainder / msInMinute);
+            remainder %= msInMinute;
+            
+            const seconds = Math.floor(remainder / msInSecond);
+            
+            document.getElementById('cd-months').textContent = String(months).padStart(2, '0');
+            document.getElementById('cd-weeks').textContent = String(weeks).padStart(2, '0');
+            document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
+            document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('cd-minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('cd-seconds').textContent = String(seconds).padStart(2, '0');
+        }
+        setInterval(updateChristmasCountdown, 1000);
+        updateChristmasCountdown();
+
+        // --- 3. OBSŁUGA PEŁNEGO EKRANU (FULLSCREEN) ---
         const panel = document.getElementById('main-panel');
         const tip = document.getElementById('exit-tip');
 
         function goFullscreen() {
             if (document.documentElement.requestFullscreen) {
                 document.documentElement.requestFullscreen();
-            } else if (document.documentElement.mozRequestFullScreen) { /* Firefox */
+            } else if (document.documentElement.mozRequestFullScreen) {
                 document.documentElement.mozRequestFullScreen();
-            } else if (document.documentElement.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+            } else if (document.documentElement.webkitRequestFullscreen) {
                 document.documentElement.webkitRequestFullscreen();
-            } else if (document.documentElement.msRequestFullscreen) { /* IE/Edge */
+            } else if (document.documentElement.msRequestFullscreen) {
                 document.documentElement.msRequestFullscreen();
             }
         }
 
-        // Nasłuchiwanie zmiany stanu fullscreen
         document.addEventListener('fullscreenchange', handleFullscreenChange);
         document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
         document.addEventListener('mozfullscreenchange', handleFullscreenChange);
@@ -209,33 +320,28 @@
 
         function handleFullscreenChange() {
             if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
-                // Tryb pełnoekranowy aktywny: ukryj niebieski panel, pokaż wskazówkę wyjścia
                 panel.style.opacity = '0';
                 panel.style.pointerEvents = 'none';
                 tip.style.opacity = '1';
-                // Ukryj podpowiedź automatycznie po 3 sekundach
                 setTimeout(() => { tip.style.opacity = '0'; }, 3000);
             } else {
-                // Powrót z pełnego ekranu (np. przez klawisz ESC)
                 panel.style.opacity = '1';
                 panel.style.pointerEvents = 'auto';
                 tip.style.opacity = '0';
             }
         }
 
-        // --- 3. ANIMACJA MATRIX (KOD BINARNY) ---
+        // --- 4. ANIMACJA MATRIX (KOD BINARNY) ---
         const canvas = document.getElementById('matrix');
         const ctx = canvas.getContext('2d');
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            
-            // Ponowne przeliczenie kolumn przy zmianie rozmiaru okna
             columns = canvas.width / fontSize;
             rainDrops = [];
             for (let x = 0; x < columns; x++) {
-                rainDrops[x] = Math.random() * -100; // losowy start, żeby linie nie spadały równo
+                rainDrops[x] = Math.random() * -100;
             }
         }
 
@@ -251,7 +357,7 @@
             ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.fillStyle = '#00ff33'; // wyrazisty zielony neonowy kolor Matrixa
+            ctx.fillStyle = '#00ff33';
             ctx.font = fontSize + 'px monospace';
 
             for (let i = 0; i < rainDrops.length; i++) {
