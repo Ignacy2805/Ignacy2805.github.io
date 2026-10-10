@@ -123,24 +123,23 @@
         /* CAŁY MODUŁ ŚWIĄTECZNY - CZERWONE WYPEŁNIENIE I CZERWONA RAMA */
         .countdown-red-box {
             width: 100%;
-            background: #4a0000; /* Ciemnoczerwone pełne tło zamiast niebieskiego */
-            border: 4px solid #ff1a1a; /* Gruba, jasnoczerwona rama */
+            background: #4a0000;
+            border: 4px solid #ff1a1a;
             border-radius: 18px;
-            padding: 20px 20px 25px 20px;
+            padding: 25px 20px 30px 20px;
             box-shadow: 0 10px 30px rgba(255, 0, 0, 0.25);
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* Napis przeniesiony do wnętrza ramy */
         .countdown-title {
             color: #ffffff;
             font-size: 1.1rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             opacity: 0.95;
             text-shadow: 0 2px 4px rgba(0,0,0,0.4);
             text-align: center;
@@ -149,25 +148,25 @@
         .countdown-container {
             display: flex;
             justify-content: center;
-            gap: 12px;
+            gap: 16px;
             width: 100%;
-            flex-wrap: wrap;
+            max-width: 600px; /* Nieco węższy kontener, bo mamy mniej kafelków */
         }
 
-        /* Małe kafelki odliczania - jeszcze ciemniejszy czerwony dla kontrastu */
+        /* Kafelki odliczania - teraz większe i bardziej czytelne */
         .countdown-box {
+            flex: 1;
             background: rgba(40, 0, 0, 0.7); 
             border: 1px solid rgba(255, 77, 77, 0.4);
             border-radius: 12px;
-            padding: 15px 10px;
-            min-width: 100px;
+            padding: 18px 10px;
             text-align: center;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
         }
 
         .countdown-value {
             color: #ffffff;
-            font-size: 2.2rem;
+            font-size: 2.6rem; /* Zwiększona czcionka dla lepszego efektu */
             font-weight: 800;
             font-variant-numeric: tabular-nums;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
@@ -175,7 +174,7 @@
 
         .countdown-label {
             color: rgba(255, 190, 190, 0.9);
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 600;
             text-transform: uppercase;
             margin-top: 5px;
@@ -218,18 +217,10 @@
 
         <div class="countdown-section">
             
-            <!-- MODUŁ ŚWIĄTECZNY - TERAZ ZAWIERA NAPIS I MA CZERWONE TŁO -->
             <div class="countdown-red-box">
                 <div class="countdown-title">Do Świąt Bożego Narodzenia pozostało:</div>
                 <div class="countdown-container">
-                    <div class="countdown-box">
-                        <div class="countdown-value" id="cd-months">00</div>
-                        <div class="countdown-label">Miesięcy</div>
-                    </div>
-                    <div class="countdown-box">
-                        <div class="countdown-value" id="cd-weeks">00</div>
-                        <div class="countdown-label">Tygodni</div>
-                    </div>
+                    <!-- Usunąłem kafelki miesięcy i tygodni -->
                     <div class="countdown-box">
                         <div class="countdown-value" id="cd-days">00</div>
                         <div class="countdown-label">Dni</div>
@@ -269,48 +260,29 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // --- 2. NOWA POPRAWIONA LOGIKA ODNLICZANIA KALENDARZOWEGO ---
+        // --- 2. NOWA KLASYCZNA LOGIKA ODNLICZANIA (DNI, GODZINY, MINUTY, SEKUNDY) ---
         function updateChristmasCountdown() {
             const now = new Date();
             let currentYear = now.getFullYear();
             
             let target = new Date(currentYear, 11, 25, 0, 0, 0);
+            // Jeśli święta w tym roku minęły, odliczaj do następnego roku
             if (now > target) {
                 target = new Date(currentYear + 1, 11, 25, 0, 0, 0);
             }
             
-            // Obliczanie różnicy w miesiącach kalendarzowych
-            let months = (target.getFullYear() - now.getFullYear()) * 12 + (target.getMonth() - now.getMonth());
-            
-            // Tworzymy datę testową przesuniętą o wyliczoną liczbę pełnych miesięcy
-            let testDate = new Date(now.getTime());
-            testDate.setMonth(testDate.getMonth() + months);
-            
-            // Jeśli przesunęliśmy się za daleko, cofamy o jeden miesiąc
-            if (testDate > target) {
-                months--;
-                testDate = new Date(now.getTime());
-                testDate.setMonth(testDate.getMonth() + months);
-            }
-            
-            // Pozostały czas po odjęciu pełnych miesięcy kalendarzowych
-            let diff = target - testDate;
+            // Różnica czasu w milisekundach
+            let diff = target - now;
             
             const msInSecond = 1000;
             const msInMinute = msInSecond * 60;
             const msInHour = msInMinute * 60;
             const msInDay = msInHour * 24;
-            const msInWeek = msInDay * 7;
             
-            // Wyliczanie pełnych tygodni z reszty
-            const weeks = Math.floor(diff / msInWeek);
-            diff %= msInWeek;
-            
-            // Wyliczanie pełnych dni z reszty
+            // Obliczanie całkowitej liczby dni (bez dzielenia na miesiące i tygodnie)
             const days = Math.floor(diff / msInDay);
             diff %= msInDay;
             
-            // Wyliczanie godzin, minut i sekund
             const hours = Math.floor(diff / msInHour);
             diff %= msInHour;
             
@@ -319,9 +291,7 @@
             
             const seconds = Math.floor(diff / msInSecond);
             
-            // Wstrzyknięcie poprawnych wartości do struktury strony
-            document.getElementById('cd-months').textContent = String(months).padStart(2, '0');
-            document.getElementById('cd-weeks').textContent = String(weeks).padStart(2, '0');
+            // Wstrzyknięcie wartości do HTML
             document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
             document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
             document.getElementById('cd-minutes').textContent = String(minutes).padStart(2, '0');
