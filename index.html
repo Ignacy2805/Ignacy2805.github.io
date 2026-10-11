@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Strona Ignacego</title>
+    <title>Ignacy</title>
     <style>
         /* Podstawowy reset i ustawienia tła */
         * {
@@ -52,13 +52,13 @@
             transition: opacity 0.3s ease;
         }
 
-        /* Układ górnego paska z elementami */
+        /* Układ górnego paska z elementami - teraz mieści 4 elementy */
         .top-row {
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         /* Przyciski i zegar u góry - niebieskie */
@@ -69,7 +69,7 @@
             border: 2px solid rgba(255, 255, 255, 0.25);
             border-radius: 14px;
             color: #ffffff;
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 600;
             text-decoration: none;
             display: flex;
@@ -101,13 +101,13 @@
         }
 
         #time {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             letter-spacing: 0.5px;
         }
 
         #date {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             opacity: 0.8;
             margin-top: 2px;
         }
@@ -120,7 +120,7 @@
             align-items: center;
         }
 
-        /* CAŁY MODUŁ ŚWIĄTECZNY - CZERWONE WYPEŁNIENIE I CZERWONA RAMA */
+        /* Moduł świąteczny w czerwonej ramie */
         .countdown-red-box {
             width: 100%;
             background: #4a0000;
@@ -150,10 +150,10 @@
             justify-content: center;
             gap: 16px;
             width: 100%;
-            max-width: 600px; /* Nieco węższy kontener, bo mamy mniej kafelków */
+            max-width: 600px;
         }
 
-        /* Kafelki odliczania - teraz większe i bardziej czytelne */
+        /* Kafelki odliczania */
         .countdown-box {
             flex: 1;
             background: rgba(40, 0, 0, 0.7); 
@@ -166,7 +166,7 @@
 
         .countdown-value {
             color: #ffffff;
-            font-size: 2.6rem; /* Zwiększona czcionka dla lepszego efektu */
+            font-size: 2.6rem;
             font-weight: 800;
             font-variant-numeric: tabular-nums;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
@@ -207,8 +207,16 @@
 
     <div class="container" id="main-panel">
         <div class="top-row">
+            <!-- Przycisk GitHub -->
             <a href="https://github.com" target="_blank" class="btn">github</a>
+            
+            <!-- NOWY PRZYCISK: Psikus (pobieranie pliku exe) -->
+            <a href="aplikacja.exe" download class="btn">psikus</a>
+            
+            <!-- Przycisk Matrix -->
             <button class="btn" onclick="goFullscreen()">matrix (fullscreen)</button>
+            
+            <!-- Zegar i data -->
             <div class="clock-tile">
                 <div id="time">00:00:00</div>
                 <div id="date">01.01.2026</div>
@@ -216,11 +224,9 @@
         </div>
 
         <div class="countdown-section">
-            
             <div class="countdown-red-box">
                 <div class="countdown-title">Do Świąt Bożego Narodzenia pozostało:</div>
                 <div class="countdown-container">
-                    <!-- Usunąłem kafelki miesięcy i tygodni -->
                     <div class="countdown-box">
                         <div class="countdown-value" id="cd-days">00</div>
                         <div class="countdown-label">Dni</div>
@@ -239,7 +245,6 @@
                     </div>
                 </div>
             </div>
-            
         </div>
     </div>
     <script>
@@ -260,18 +265,16 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // --- 2. NOWA KLASYCZNA LOGIKA ODNLICZANIA (DNI, GODZINY, MINUTY, SEKUNDY) ---
+        // --- 2. LOGIKA ODNLICZANIA (DNI, GODZINY, MINUTY, SEKUNDY) ---
         function updateChristmasCountdown() {
             const now = new Date();
             let currentYear = now.getFullYear();
             
             let target = new Date(currentYear, 11, 25, 0, 0, 0);
-            // Jeśli święta w tym roku minęły, odliczaj do następnego roku
             if (now > target) {
                 target = new Date(currentYear + 1, 11, 25, 0, 0, 0);
             }
             
-            // Różnica czasu w milisekundach
             let diff = target - now;
             
             const msInSecond = 1000;
@@ -279,7 +282,6 @@
             const msInHour = msInMinute * 60;
             const msInDay = msInHour * 24;
             
-            // Obliczanie całkowitej liczby dni (bez dzielenia na miesiące i tygodnie)
             const days = Math.floor(diff / msInDay);
             diff %= msInDay;
             
@@ -291,7 +293,6 @@
             
             const seconds = Math.floor(diff / msInSecond);
             
-            // Wstrzyknięcie wartości do HTML
             document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
             document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
             document.getElementById('cd-minutes').textContent = String(minutes).padStart(2, '0');
