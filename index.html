@@ -210,9 +210,6 @@
             <!-- Przycisk GitHub -->
             <a href="https://github.com" target="_blank" class="btn">github</a>
             
-            <!-- ZMIANA NA PLIK ZIP: Pobierze się bez blokad jako spakowane archiwum -->
-            <a href="psikus.zip" download="psikus.zip" class="btn">psikus</a>
-            
             <!-- Przycisk Matrix -->
             <button class="btn" onclick="goFullscreen()">matrix (fullscreen)</button>
             
@@ -265,45 +262,82 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // --- 2. LOGIKA ODNLICZANIA (DNI, GODZINY, MINUTY, SEKUNDY) ---
-        function updateChristmasCountdown() {
+        // --- 2. OBSŁUGA AUTOMATYCZNEGO ODLICZANIA DO ŚWIĄT ---
+        function updateCountdown() {
             const now = new Date();
             let currentYear = now.getFullYear();
             
-            let target = new Date(currentYear, 11, 25, 0, 0, 0);
-            if (now > target) {
-                target = new Date(currentYear + 1, 11, 25, 0, 0, 0);
+            let targetDate = new Date(`December 25, ${currentYear} 00:00:00`);
+            
+            if (now > targetDate) {
+                targetDate = new Date(`December 25, ${currentYear + 1} 00:00:00`);
             }
             
-            let diff = target - now;
+            const diff = targetDate - now;
             
-            const msInSecond = 1000;
-            const msInMinute = msInSecond * 60;
-            const msInHour = msInMinute * 60;
-            const msInDay = msInHour * 24;
-            
-            const days = Math.floor(diff / msInDay);
-            diff %= msInDay;
-            
-            const hours = Math.floor(diff / msInHour);
-            diff %= msInHour;
-            
-            const minutes = Math.floor(diff / msInMinute);
-            diff %= msInMinute;
-            
-            const seconds = Math.floor(diff / msInSecond);
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
             
             document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
             document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
             document.getElementById('cd-minutes').textContent = String(minutes).padStart(2, '0');
             document.getElementById('cd-seconds').textContent = String(seconds).padStart(2, '0');
         }
-        setInterval(updateChristmasCountdown, 1000);
-        updateChristmasCountdown();
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
 
-        // --- 3. OBSŁUGA PEŁNEGO EKRANU (FULLSCREEN) ---
-        const panel = document.getElementById('main-panel');
-        const tip = document.getElementById('exit-tip');
+        // --- 3. EFEKT MATRIX (DESZCZ ZNAKÓW) ---
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const katakana = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ";
+        const alphabet = katakana.split("");
+
+        const fontSize = 16;
+        let columns = canvas.width / fontSize;
+        let rainDrops = [];
+
+        function initRain() {
+            columns = canvas.width / fontSize;
+            rainDrops = [];
+            for (let x = 0; x < columns; x++) {
+                rainDrops[x] = 1;
+            }
+        }
+        initRain();
+        window.addEventListener('resize', initRain);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet[Math.floor(Math.random() * alphabet.length)];
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 30);
+
+        // --- 4. OBSŁUGA FULLSCREEN (TRYB MATRIX) ---
+        const mainPanel = document.getElementById('main-panel');
+        const exitTip = document.getElementById('exit-tip');
 
         function goFullscreen() {
             if (document.documentElement.requestFullscreen) {
@@ -317,67 +351,22 @@
             }
         }
 
-        document.addEventListener('fullscreenchange', handleFullscreenChange);
-        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-
-        function handleFullscreenChange() {
+        function onFullscreenChange() {
             if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
-                panel.style.opacity = '0';
-                panel.style.pointerEvents = 'none';
-                tip.style.opacity = '1';
-                setTimeout(() => { tip.style.opacity = '0'; }, 3000);
+                mainPanel.style.opacity = '0';
+                mainPanel.style.pointerEvents = 'none';
+                exitTip.style.opacity = '1';
             } else {
-                panel.style.opacity = '1';
-                panel.style.pointerEvents = 'auto';
-                tip.style.opacity = '0';
+                mainPanel.style.opacity = '1';
+                mainPanel.style.pointerEvents = 'auto';
+                exitTip.style.opacity = '0';
             }
         }
 
-        // --- 4. ANIMACJA MATRIX (KOD BINARNY) ---
-        const canvas = document.getElementById('matrix');
-        const ctx = canvas.getContext('2d');
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            columns = canvas.width / fontSize;
-            rainDrops = [];
-            for (let x = 0; x < columns; x++) {
-                rainDrops[x] = Math.random() * -100;
-            }
-        }
-
-        const alphabet = "01";
-        const fontSize = 16;
-        let columns = 0;
-        let rainDrops = [];
-
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        function draw() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#00ff33';
-            ctx.font = fontSize + 'px monospace';
-
-            for (let i = 0; i < rainDrops.length; i++) {
-                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-                const x = i * fontSize;
-                const y = rainDrops[i] * fontSize;
-
-                ctx.fillText(text, x, y);
-
-                if (y > canvas.height && Math.random() > 0.975) {
-                    rainDrops[i] = 0;
-                }
-                rainDrops[i]++;
-            }
-        }
-        setInterval(draw, 30);
+        document.addEventListener('fullscreenchange', onFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+        document.addEventListener('mozfullscreenchange', onFullscreenChange);
+        document.addEventListener('MSFullscreenChange', onFullscreenChange);
     </script>
 </body>
 </html>
