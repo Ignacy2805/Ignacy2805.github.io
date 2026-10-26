@@ -51,7 +51,7 @@
             margin-bottom: 35px;
         }
 
-        /* Stylizacja przycisków */
+        /* Stylizacja przycisków typu input */
         .vote-btn {
             flex: 1;
             padding: 16px 0;
@@ -63,6 +63,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
 
         /* Przycisk TAK - zielony */
@@ -105,13 +106,13 @@
     <div class="container">
         <h1>Czy w tym roku doświadczyłeś hejtu?</h1>
         
-        <!-- Twój prywatny bezpieczny formularz Formspree -->
+        <!-- Poprawiony formularz wysyłający dane standardową metodą -->
         <form action="https://formspree.io" method="POST" class="buttons-container">
             <!-- Przycisk TAK -->
-            <button type="submit" name="Odpowiedź" value="TAK" class="vote-btn btn-yes">TAK</button>
+            <input type="submit" name="Odpowiedź" value="TAK" class="vote-btn btn-yes">
             
             <!-- Przycisk NIE -->
-            <button type="submit" name="Odpowiedź" value="NIE" class="vote-btn btn-no">NIE</button>
+            <input type="submit" name="Odpowiedź" value="NIE" class="vote-btn btn-no">
         </form>
 
         <!-- Link powrotu na czarną stronę główną -->
