@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Akcja Anty Hejt</title>
     <style>
-        /* Reset podstawowy */
         * {
             margin: 0;
             padding: 0;
@@ -17,7 +16,7 @@
             height: 100%;
             margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            /* Nowoczesne, jasne, niebieskie tło z delikatnym gradientem */
+            /* Piękne, jasne, niebieskie tło */
             background: linear-gradient(135deg, #e0f2fe, #bae6fd);
             display: flex;
             justify-content: center;
@@ -25,27 +24,57 @@
             padding: 20px;
         }
 
-        /* Biała karta unosząca się na środku ekranu */
+        /* Elegancka biała karta na środku ekranu */
         .container {
             background: #ffffff;
-            padding: 35px;
+            padding: 40px;
             border-radius: 24px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
-            max-width: 640px;
+            max-width: 550px;
             width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
-        /* Idealnie dopasowane okienko z ankietą Google */
-        iframe {
-            width: 100%;
-            height: 480px;
-            border: none;
+        h1 {
+            color: #0f172a;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        p {
+            color: #475569;
+            font-size: 1.05rem;
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+
+        /* Główny, duży przycisk do głosowania */
+        .vote-main-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-decoration: none;
+            padding: 18px 36px;
             border-radius: 16px;
-            margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(29, 78, 216, 0.3);
+            transition: all 0.25s ease;
+            margin-bottom: 30px;
+            letter-spacing: 0.5px;
+        }
+
+        .vote-main-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 30px rgba(29, 78, 216, 0.4);
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+        }
+
+        .vote-main-btn:active {
+            transform: translateY(-1px);
         }
 
         /* Przycisk powrotu na stronę główną */
@@ -53,28 +82,29 @@
             display: inline-block;
             color: #64748b;
             text-decoration: none;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
-            transition: all 0.2s ease;
-            padding: 10px 20px;
-            border-radius: 10px;
-            background: #f1f5f9;
+            transition: color 0.2s ease;
         }
 
         .back-link:hover {
             color: #0284c7;
-            background: #e2e8f0;
-            transform: translateY(-1px);
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Twoja ankieta Google wbudowana bezpośrednio w stronę -->
-        <iframe src="https://google.com">Ładowanie formularza...</iframe>
+        <h1>Akcja Anty Hejt</h1>
+        <p>Kliknij poniższy przycisk, aby odpowiedzieć na pytanie w bezpiecznej ankiecie.</p>
+        
+        <!-- Przycisk kierujący bezpośrednio do Twojego formularza Google -->
+        <a href="https://google.com" target="_blank" class="vote-main-btn">
+            KLIKNIJ, ABY ZAGŁOSOWAĆ
+        </a>
 
-        <!-- Estetyczny przycisk powrotu na czarną stronę główną -->
+        <br>
+        <!-- Link powrotu na czarną stronę główną -->
         <a href="indeks.html" class="back-link">← Powrót do strony głównej</a>
     </div>
 
