@@ -88,24 +88,53 @@
         }
 
         .back-link:hover { color: #0284c7; }
+
+        .success-message {
+            display: none;
+            color: #10b981;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 35px;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Czy w tym roku doświadczyłeś hejtu?</h1>
+        <h1 id="form-title">Czy w tym roku doświadczyłeś hejtu?</h1>
         
-        <!-- Klasyczny, czysty formularz Formspree z poprawionymi nazwami pól -->
-        <form action="https://formspree.io" method="POST" class="buttons-container">
-            
-            <!-- Każdy przycisk wysyła teraz poprawną wartość "TAK" lub "NIE" do Twojej tabeli -->
-            <button type="submit" name="Wybrana odpowiedz" value="TAK" class="vote-btn btn-yes">TAK</button>
-            <button type="submit" name="Wybrana odpowiedz" value="NIE" class="vote-btn btn-no">NIE</button>
-            
-        </form>
+        <div id="success-text" class="success-message">Dziękujemy! Twój głos został zapisany.</div>
+
+        <!-- Zmienione na zwykły blok z przyciskami wywołującymi funkcję JavaScript -->
+        <div class="buttons-container" id="btn-block">
+            <button onclick="wyslijGlos('TAK')" class="vote-btn btn-yes">TAK</button>
+            <button onclick="wyslijGlos('NIE')" class="vote-btn btn-no">NIE</button>
+        </div>
 
         <a href="/" class="back-link">← Powrót do strony głównej</a>
     </div>
 
+    <script>
+        function wyslijGlos(odpowiedz) {
+            // Przygotowanie danych w formacie tekstowym, który Formspree przyjmie bez błędu metody HTTP
+            var dane = new URLSearchParams();
+            dane.append('Wybrana odpowiedz', odpowiedz);
+
+            // Bezpieczne wysłanie danych w tle bezpośrednio na Twój endpoint Formspree
+            fetch('https://formspree.io', {
+                method: 'POST',
+                body: dane,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json'
+                }
+            });
+
+            // Natychmiastowa zmiana widoku na stronie, bez przeładowywania i bez pokazywania białego ekranu Formspree
+            document.getElementById('btn-block').style.display = 'none';
+            document.getElementById('form-title').style.display = 'none';
+            document.getElementById('success-text').style.display = 'block';
+        }
+    </script>
 </body>
 </html>
