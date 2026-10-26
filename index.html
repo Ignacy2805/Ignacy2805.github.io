@@ -38,13 +38,13 @@
             position: relative;
             z-index: 2;
             width: 95%;
-            max-width: 950px; /* Zwiększone, aby 3 przyciski i zegar ładnie się mieściły */
-            height: 85%;
-            max-height: 560px;
+            max-width: 950px; 
+            height: 90%;
+            max-height: 620px;
             background: linear-gradient(135deg, #4d66f0, #283cb3);
             border-radius: 20px;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
-            padding: 40px;
+            padding: 35px 40px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -59,6 +59,14 @@
             justify-content: space-between;
             align-items: center;
             gap: 15px;
+        }
+
+        /* Nowy wiersz dla przycisku anty-hejt */
+        .middle-row {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
         }
 
         /* Przyciski i zegar u góry - niebieskie */
@@ -80,6 +88,14 @@
             backdrop-filter: blur(10px);
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             text-align: center;
+        }
+
+        /* Specjalny styl dla przycisku Akcja Anty Hejt */
+        .btn-anti-hate {
+            max-width: 400px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.4);
         }
 
         /* Efekty najechania dla niebieskich przycisków */
@@ -207,7 +223,7 @@
 
     <div class="container" id="main-panel">
         <div class="top-row">
-            <!-- Przycisk GitHub -->
+            <!-- Poprawiony Przycisk GitHub -->
             <a href="https://github.com" target="_blank" class="btn">github</a>
             
             <!-- NOWY PRZYCISK POBIERZ O MNIE -->
@@ -223,6 +239,10 @@
             </div>
         </div>
 
+        <!-- NOWY RZĄD: Przycisk akcja anty hejt -->
+        <div class="middle-row">
+            <a href="antyhejt.html" class="btn btn-anti-hate">akcja anty hejt</a>
+        </div>
         <div class="countdown-section">
             <div class="countdown-red-box">
                 <div class="countdown-title">Do Świąt Bożego Narodzenia pozostało:</div>
@@ -247,6 +267,7 @@
             </div>
         </div>
     </div>
+
     <script>
         // --- 1. OBSŁUGA ZEGARA I DATY ---
         function updateClock() {
@@ -265,18 +286,17 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // --- 2. OBSŁUGA AUTOMATYCZNEGO ODLICZANIA DO ŚWIĄT ---
+        // --- 2. ODLICZANIE DO ŚWIĄT BOŻEGO NARODZENIA ---
         function updateCountdown() {
             const now = new Date();
-            let currentYear = now.getFullYear();
+            const currentYear = now.getFullYear();
+            let xmasTarget = new Date(`December 25, ${currentYear} 00:00:00`);
             
-            let targetDate = new Date(`December 25, ${currentYear} 00:00:00`);
-            
-            if (now > targetDate) {
-                targetDate = new Date(`December 25, ${currentYear + 1} 00:00:00`);
+            if (now > xmasTarget) {
+                xmasTarget = new Date(`December 25, ${currentYear + 1} 00:00:00`);
             }
             
-            const diff = targetDate - now;
+            const diff = xmasTarget - now;
             
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -291,7 +311,7 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // --- 3. EFEKT MATRIX (DESZCZ ZNAKÓW) ---
+        // --- 3. EFEKT MATRIX (ZMIENIONY NA KOD BINARNY) ---
         const canvas = document.getElementById('matrix');
         const ctx = canvas.getContext('2d');
 
@@ -302,34 +322,27 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        const katakana = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ";
-        const alphabet = katakana.split("");
-
+        const alphabet = "01";
         const fontSize = 16;
         let columns = canvas.width / fontSize;
-        let rainDrops = [];
+        let rainDrops = Array(Math.floor(columns)).fill(1);
 
-        function initRain() {
+        window.addEventListener('resize', () => {
             columns = canvas.width / fontSize;
-            rainDrops = [];
-            for (let x = 0; x < columns; x++) {
-                rainDrops[x] = 1;
-            }
-        }
-        initRain();
-        window.addEventListener('resize', initRain);
+            rainDrops = Array(Math.floor(columns)).fill(1);
+        });
 
         function drawMatrix() {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+            
             ctx.fillStyle = '#0F0';
             ctx.font = fontSize + 'px monospace';
-
+            
             for (let i = 0; i < rainDrops.length; i++) {
-                const text = alphabet[Math.floor(Math.random() * alphabet.length)];
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
                 ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
-
+                
                 if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                     rainDrops[i] = 0;
                 }
@@ -338,38 +351,37 @@
         }
         setInterval(drawMatrix, 30);
 
-        // --- 4. OBSŁUGA FULLSCREEN (TRYB MATRIX) ---
-        const mainPanel = document.getElementById('main-panel');
-        const exitTip = document.getElementById('exit-tip');
-
+        // --- 4. OBSŁUGA TRYBU FULLSCREEN ---
         function goFullscreen() {
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen();
-            } else if (document.documentElement.mozRequestFullScreen) {
-                document.documentElement.mozRequestFullScreen();
-            } else if (document.documentElement.webkitRequestFullscreen) {
-                document.documentElement.webkitRequestFullscreen();
-            } else if (document.documentElement.msRequestFullscreen) {
-                document.documentElement.msRequestFullscreen();
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
             }
         }
 
-        function onFullscreenChange() {
-            if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
-                mainPanel.style.opacity = '0';
-                mainPanel.style.pointerEvents = 'none';
-                exitTip.style.opacity = '1';
+        document.addEventListener('fullscreenchange', handleFullscreenToggle);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenToggle);
+
+        function handleFullscreenToggle() {
+            const isFull = document.fullscreenElement || document.webkitFullscreenElement;
+            const panel = document.getElementById('main-panel');
+            const tip = document.getElementById('exit-tip');
+            
+            if (isFull) {
+                panel.style.opacity = '0';
+                panel.style.pointerEvents = 'none';
+                tip.style.opacity = '1';
+                setTimeout(() => { tip.style.opacity = '0'; }, 3000);
             } else {
-                mainPanel.style.opacity = '1';
-                mainPanel.style.pointerEvents = 'auto';
-                exitTip.style.opacity = '0';
+                panel.style.opacity = '1';
+                panel.style.pointerEvents = 'auto';
+                tip.style.opacity = '0';
             }
         }
-
-        document.addEventListener('fullscreenchange', onFullscreenChange);
-        document.addEventListener('webkitfullscreenchange', onFullscreenChange);
-        document.addEventListener('mozfullscreenchange', onFullscreenChange);
-        document.addEventListener('MSFullscreenChange', onFullscreenChange);
     </script>
 </body>
 </html>
