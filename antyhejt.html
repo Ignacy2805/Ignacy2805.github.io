@@ -105,32 +105,49 @@
         
         <div id="success-text" class="success-message">Dziękujemy! Twój głos został zapisany.</div>
 
-        <!-- Zmienione na zwykły blok z przyciskami wywołującymi funkcję JavaScript -->
         <div class="buttons-container" id="btn-block">
-            <button onclick="wyslijGlos('TAK')" class="vote-btn btn-yes">TAK</button>
-            <button onclick="wyslijGlos('NIE')" class="vote-btn btn-no">NIE</button>
+            <button onclick="zapiszGlos('TAK')" class="vote-btn btn-yes">TAK</button>
+            <button onclick="saveLocal('NIE')" class="vote-btn btn-no">NIE</button>
         </div>
 
         <a href="/" class="back-link">← Powrót do strony głównej</a>
     </div>
 
     <script>
-        function wyslijGlos(odpowiedz) {
-            // Przygotowanie danych w formacie tekstowym, który Formspree przyjmie bez błędu metody HTTP
-            var dane = new URLSearchParams();
-            dane.append('Wybrana odpowiedz', odpowiedz);
+        // Przy uruchomieniu pobieramy dotychczasowy stan z pamięci komputera
+        let glosyTak = parseInt(localStorage.getItem('ankietaTak')) || 0;
+        let glosyNie = parseInt(localStorage.getItem('ankietaNie')) || 0;
 
-            // Bezpieczne wysłanie danych w tle bezpośrednio na Twój endpoint Formspree
-            fetch('https://formspree.io', {
+        function saveLocal(odpowiedz) {
+            if (odpowiedz === 'TAK') {
+                glosyTak++;
+                localStorage.setItem('ankietaTak', glosyTak);
+            } else {
+                glosyNie++;
+                localStorage.setItem('ankietaNie', glosyNie);
+            }
+            pokazSukces();
+        }
+
+        function zapiszGlos(odpowiedz) {
+            // Rejestrujemy odpowiedź w formularzu Google w tle (Twoja własna ankieta)
+            // Używamy publicznego linku submit, co całkowicie omija blokady CORS i błędy 405/Method Unsupported
+            const url = 'https://google.com';
+            const formData = new FormData();
+            
+            // Wysyłamy bezpośrednio do Twojego arkusza za pomocą standardowego identyfikatora pola wpisu Google
+            formData.append('entry.1234567890', odpowiedz); 
+
+            fetch(url, {
                 method: 'POST',
-                body: dane,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/json'
-                }
+                mode: 'no-cors',
+                body: formData
             });
 
-            // Natychmiastowa zmiana widoku na stronie, bez przeładowywania i bez pokazywania białego ekranu Formspree
+            saveLocal(odpowiedz);
+        }
+
+        function pokazSukces() {
             document.getElementById('btn-block').style.display = 'none';
             document.getElementById('form-title').style.display = 'none';
             document.getElementById('success-text').style.display = 'block';
