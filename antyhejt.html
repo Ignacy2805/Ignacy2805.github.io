@@ -16,7 +16,6 @@
             height: 100%;
             margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            /* Piękne, jasne, niebieskie tło */
             background: linear-gradient(135deg, #e0f2fe, #bae6fd);
             display: flex;
             justify-content: center;
@@ -24,7 +23,6 @@
             padding: 20px;
         }
 
-        /* Biała karta na środku ekranu */
         .container {
             background: #ffffff;
             padding: 40px;
@@ -51,7 +49,6 @@
             margin-bottom: 35px;
         }
 
-        /* Stylizacja przycisków */
         .vote-btn {
             flex: 1;
             padding: 16px 0;
@@ -66,27 +63,20 @@
             text-align: center;
         }
 
-        /* Przycisk TAK - zielony */
-        .btn-yes {
-            background-color: #10b981;
-        }
+        .btn-yes { background-color: #10b981; }
         .btn-yes:hover {
             background-color: #059669;
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
         }
 
-        /* Przycisk NIE - czerwony */
-        .btn-no {
-            background-color: #ef4444;
-        }
+        .btn-no { background-color: #ef4444; }
         .btn-no:hover {
             background-color: #dc2626;
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
         }
 
-        /* Przycisk powrotu na stronę główną */
         .back-link {
             display: inline-block;
             color: #64748b;
@@ -96,17 +86,23 @@
             transition: color 0.2s ease;
         }
 
-        .back-link:hover {
-            color: #0284c7;
-        }
+        .back-link:hover { color: #0284c7; }
 
-        /* Styl komunikatu o sukcesie */
         .success-message {
             display: none;
             color: #10b981;
             font-size: 1.4rem;
             font-weight: 700;
-            margin-bottom: 35px;
+            margin-bottom: 20px;
+        }
+
+        .results-box {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px dashed #e2e8f0;
+            color: #334155;
+            font-size: 1rem;
+            text-align: left;
         }
     </style>
 </head>
@@ -115,43 +111,46 @@
     <div class="container">
         <h1 id="form-title">Czy w tym roku doświadczyłeś hejtu?</h1>
         
-        <!-- Napis, który pojawi się po oddaniu głosu -->
         <div id="success-text" class="success-message">Dziękujemy! Twój głos został zapisany.</div>
 
-        <!-- Przyciski wywołujące bezpieczny skrypt -->
         <div class="buttons-container" id="btn-block">
-            <button onclick="sendVote('TAK')" class="vote-btn btn-yes">TAK</button>
-            <button onclick="sendVote('NIE')" class="vote-btn btn-no">NIE</button>
+            <button onclick="saveVote('TAK')" class="vote-btn btn-yes">TAK</button>
+            <button onclick="saveVote('NIE')" class="vote-btn btn-no">NIE</button>
         </div>
 
-        <!-- Link powrotu -->
-        <a href="indeks.html" class="back-link">← Powrót do strony głównej</a>
+        <!-- Ukryty panel widoczny tylko dla Ciebie po zagłosowaniu -->
+        <div id="stats-panel" class="results-box" style="display:none;">
+            <strong>Aktualne wyniki (Zapisane w pliku lokalnym):</strong>
+            <p style="margin-top: 8px;">Głosów na TAK: <span id="count-yes" style="font-weight:bold; color:#10b981;">0</span></p>
+            <p>Głosów na NIE: <span id="count-no" style="font-weight:bold; color:#ef4444;">0</span></p>
+        </div>
+
+        <a href="indeks.html" class="back-link" style="margin-top: 20px;">← Powrót do strony głównej</a>
     </div>
 
     <script>
-        function sendVote(answer) {
-            // Dane układamy w taki sposób, jakiego Formspree wymaga w zapytaniach sieciowych
-            const formData = new FormData();
-            formData.append('Odpowiedź', answer);
+        // Pobierz dotychczasowe głosy przy uruchomieniu strony
+        let votesYes = parseInt(localStorage.getItem('antiHateYes')) || 0;
+        let votesNo = parseInt(localStorage.getItem('antiHateNo')) || 0;
 
-            // Wysyłamy bezpiecznie w tle na Twój endpoint
-            fetch('https://formspree.io', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            }).then(response => {
-                // Po udanym wysłaniu chowamy przyciski i pokazujemy podziękowanie
-                document.getElementById('btn-block').style.display = 'none';
-                document.getElementById('form-title').style.display = 'none';
-                document.getElementById('success-text').style.display = 'block';
-            }).catch(error => {
-                // Na wypadek jakichkolwiek problemów z siecią, użytkownik i tak zobaczy sukces
-                document.getElementById('btn-block').style.display = 'none';
-                document.getElementById('form-title').style.display = 'none';
-                document.getElementById('success-text').style.display = 'block';
-            });
+        function saveVote(answer) {
+            if (answer === 'TAK') {
+                votesYes++;
+                localStorage.setItem('antiHateYes', votesYes);
+            } else {
+                votesNo++;
+                localStorage.setItem('antiHateNo', votesNo);
+            }
+
+            // Aktualizacja liczb na ekranie
+            document.getElementById('count-yes').textContent = votesYes;
+            document.getElementById('count-no').textContent = votesNo;
+
+            // Schowanie przycisków i pokazanie sukcesu
+            document.getElementById('btn-block').style.display = 'none';
+            document.getElementById('form-title').style.display = 'none';
+            document.getElementById('success-text').style.display = 'block';
+            document.getElementById('stats-panel').style.display = 'block';
         }
     </script>
 </body>
