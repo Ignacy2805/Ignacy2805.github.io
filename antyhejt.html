@@ -84,74 +84,28 @@
             font-size: 0.95rem;
             font-weight: 600;
             transition: color 0.2s ease;
+            margin-top: 20px;
         }
 
         .back-link:hover { color: #0284c7; }
-
-        .success-message {
-            display: none;
-            color: #10b981;
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-        }
-
-        .results-box {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px dashed #e2e8f0;
-            color: #334155;
-            font-size: 1rem;
-            text-align: left;
-        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1 id="form-title">Czy w tym roku doświadczyłeś hejtu?</h1>
+        <h1>Czy w tym roku doświadczyłeś hejtu?</h1>
         
-        <div id="success-text" class="success-message">Dziękujemy! Twój głos został zapisany.</div>
+        <!-- Klasyczny, czysty formularz Formspree z poprawionymi nazwami pól -->
+        <form action="https://formspree.io" method="POST" class="buttons-container">
+            
+            <!-- Każdy przycisk wysyła teraz poprawną wartość "TAK" lub "NIE" do Twojej tabeli -->
+            <button type="submit" name="Wybrana odpowiedz" value="TAK" class="vote-btn btn-yes">TAK</button>
+            <button type="submit" name="Wybrana odpowiedz" value="NIE" class="vote-btn btn-no">NIE</button>
+            
+        </form>
 
-        <div class="buttons-container" id="btn-block">
-            <button onclick="saveVote('TAK')" class="vote-btn btn-yes">TAK</button>
-            <button onclick="saveVote('NIE')" class="vote-btn btn-no">NIE</button>
-        </div>
-
-        <!-- Ukryty panel widoczny tylko dla Ciebie po zagłosowaniu -->
-        <div id="stats-panel" class="results-box" style="display:none;">
-            <strong>Aktualne wyniki (Zapisane w pliku lokalnym):</strong>
-            <p style="margin-top: 8px;">Głosów na TAK: <span id="count-yes" style="font-weight:bold; color:#10b981;">0</span></p>
-            <p>Głosów na NIE: <span id="count-no" style="font-weight:bold; color:#ef4444;">0</span></p>
-        </div>
-
-        <a href="indeks.html" class="back-link" style="margin-top: 20px;">← Powrót do strony głównej</a>
+        <a href="/" class="back-link">← Powrót do strony głównej</a>
     </div>
 
-    <script>
-        // Pobierz dotychczasowe głosy przy uruchomieniu strony
-        let votesYes = parseInt(localStorage.getItem('antiHateYes')) || 0;
-        let votesNo = parseInt(localStorage.getItem('antiHateNo')) || 0;
-
-        function saveVote(answer) {
-            if (answer === 'TAK') {
-                votesYes++;
-                localStorage.setItem('antiHateYes', votesYes);
-            } else {
-                votesNo++;
-                localStorage.setItem('antiHateNo', votesNo);
-            }
-
-            // Aktualizacja liczb na ekranie
-            document.getElementById('count-yes').textContent = votesYes;
-            document.getElementById('count-no').textContent = votesNo;
-
-            // Schowanie przycisków i pokazanie sukcesu
-            document.getElementById('btn-block').style.display = 'none';
-            document.getElementById('form-title').style.display = 'none';
-            document.getElementById('success-text').style.display = 'block';
-            document.getElementById('stats-panel').style.display = 'block';
-        }
-    </script>
 </body>
 </html>
