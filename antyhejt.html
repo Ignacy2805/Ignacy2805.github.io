@@ -49,6 +49,7 @@
             margin-bottom: 35px;
         }
 
+        /* Stylizacja przycisków jako zwykły czysty CSS */
         .vote-btn {
             flex: 1;
             padding: 16px 0;
@@ -61,6 +62,7 @@
             transition: all 0.2s ease;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             text-align: center;
+            text-decoration: none;
         }
 
         .btn-yes { background-color: #10b981; }
@@ -88,70 +90,27 @@
         }
 
         .back-link:hover { color: #0284c7; }
-
-        .success-message {
-            display: none;
-            color: #10b981;
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 35px;
-        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1 id="form-title">Czy w tym roku doświadczyłeś hejtu?</h1>
+        <h1>Czy w tym roku doświadczyłeś hejtu?</h1>
         
-        <div id="success-text" class="success-message">Dziękujemy! Twój głos został zapisany.</div>
-
-        <div class="buttons-container" id="btn-block">
-            <button onclick="zapiszGlos('TAK')" class="vote-btn btn-yes">TAK</button>
-            <button onclick="saveLocal('NIE')" class="vote-btn btn-no">NIE</button>
-        </div>
+        <!-- Czysty formularz HTML bez JavaScriptu ze wszystkimi wymaganymi polami dla Formspree -->
+        <form action="https://formspree.io" method="POST" class="buttons-container">
+            
+            <!-- Ukryte pole weryfikacyjne, które Formspree musi dostać, żeby nie było błędu HTTP -->
+            <input type="hidden" name="_subject" value="Nowy głos w ankiecie Anty-Hejt">
+            
+            <!-- Klasyczne przyciski wysyłające formularz -->
+            <button type="submit" name="odpowiedz" value="TAK" class="vote-btn btn-yes">TAK</button>
+            <button type="submit" name="odpowiedz" value="NIE" class="vote-btn btn-no">NIE</button>
+            
+        </form>
 
         <a href="/" class="back-link">← Powrót do strony głównej</a>
     </div>
 
-    <script>
-        // Przy uruchomieniu pobieramy dotychczasowy stan z pamięci komputera
-        let glosyTak = parseInt(localStorage.getItem('ankietaTak')) || 0;
-        let glosyNie = parseInt(localStorage.getItem('ankietaNie')) || 0;
-
-        function saveLocal(odpowiedz) {
-            if (odpowiedz === 'TAK') {
-                glosyTak++;
-                localStorage.setItem('ankietaTak', glosyTak);
-            } else {
-                glosyNie++;
-                localStorage.setItem('ankietaNie', glosyNie);
-            }
-            pokazSukces();
-        }
-
-        function zapiszGlos(odpowiedz) {
-            // Rejestrujemy odpowiedź w formularzu Google w tle (Twoja własna ankieta)
-            // Używamy publicznego linku submit, co całkowicie omija blokady CORS i błędy 405/Method Unsupported
-            const url = 'https://google.com';
-            const formData = new FormData();
-            
-            // Wysyłamy bezpośrednio do Twojego arkusza za pomocą standardowego identyfikatora pola wpisu Google
-            formData.append('entry.1234567890', odpowiedz); 
-
-            fetch(url, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: formData
-            });
-
-            saveLocal(odpowiedz);
-        }
-
-        function pokazSukces() {
-            document.getElementById('btn-block').style.display = 'none';
-            document.getElementById('form-title').style.display = 'none';
-            document.getElementById('success-text').style.display = 'block';
-        }
-    </script>
 </body>
 </html>
