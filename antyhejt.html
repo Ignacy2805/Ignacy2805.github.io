@@ -49,7 +49,6 @@
             margin-bottom: 35px;
         }
 
-        /* Stylizacja przycisków jako zwykły czysty CSS */
         .vote-btn {
             flex: 1;
             padding: 16px 0;
@@ -97,15 +96,12 @@
     <div class="container">
         <h1>Czy w tym roku doświadczyłeś hejtu?</h1>
         
-        <!-- Czysty formularz HTML bez JavaScriptu ze wszystkimi wymaganymi polami dla Formspree -->
+        <!-- Formularz z domyślnym polem tekstowym akceptowanym przez każde konto Formspree -->
         <form action="https://formspree.io" method="POST" class="buttons-container">
             
-            <!-- Ukryte pole weryfikacyjne, które Formspree musi dostać, żeby nie było błędu HTTP -->
-            <input type="hidden" name="_subject" value="Nowy głos w ankiecie Anty-Hejt">
-            
-            <!-- Klasyczne przyciski wysyłające formularz -->
-            <button type="submit" name="odpowiedz" value="TAK" class="vote-btn btn-yes">TAK</button>
-            <button type="submit" name="odpowiedz" value="NIE" class="vote-btn btn-no">NIE</button>
+            <!-- Zmienione name na "message" - to klucz do ominięcia blokady metody HTTP -->
+            <button type="submit" name="message" value="Użytkownik wybrał: TAK" class="vote-btn btn-yes">TAK</button>
+            <button type="submit" name="message" value="Użytkownik wybrał: NIE" class="vote-btn btn-no">NIE</button>
             
         </form>
 
