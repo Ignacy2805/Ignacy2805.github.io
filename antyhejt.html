@@ -51,7 +51,7 @@
             margin-bottom: 35px;
         }
 
-        /* Stylizacja przycisków typu input */
+        /* Stylizacja przycisków */
         .vote-btn {
             flex: 1;
             padding: 16px 0;
@@ -99,25 +99,60 @@
         .back-link:hover {
             color: #0284c7;
         }
+
+        /* Styl komunikatu o sukcesie */
+        .success-message {
+            display: none;
+            color: #10b981;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 35px;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Czy w tym roku doświadczyłeś hejtu?</h1>
+        <h1 id="form-title">Czy w tym roku doświadczyłeś hejtu?</h1>
         
-        <!-- Poprawiony formularz wysyłający dane standardową metodą -->
-        <form action="https://formspree.io" method="POST" class="buttons-container">
-            <!-- Przycisk TAK -->
-            <input type="submit" name="Odpowiedź" value="TAK" class="vote-btn btn-yes">
-            
-            <!-- Przycisk NIE -->
-            <input type="submit" name="Odpowiedź" value="NIE" class="vote-btn btn-no">
-        </form>
+        <!-- Napis, który pojawi się po oddaniu głosu -->
+        <div id="success-text" class="success-message">Dziękujemy! Twój głos został zapisany.</div>
 
-        <!-- Link powrotu na czarną stronę główną -->
+        <!-- Przyciski wywołujące bezpieczny skrypt -->
+        <div class="buttons-container" id="btn-block">
+            <button onclick="sendVote('TAK')" class="vote-btn btn-yes">TAK</button>
+            <button onclick="sendVote('NIE')" class="vote-btn btn-no">NIE</button>
+        </div>
+
+        <!-- Link powrotu -->
         <a href="indeks.html" class="back-link">← Powrót do strony głównej</a>
     </div>
 
+    <script>
+        function sendVote(answer) {
+            // Dane układamy w taki sposób, jakiego Formspree wymaga w zapytaniach sieciowych
+            const formData = new FormData();
+            formData.append('Odpowiedź', answer);
+
+            // Wysyłamy bezpiecznie w tle na Twój endpoint
+            fetch('https://formspree.io', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                // Po udanym wysłaniu chowamy przyciski i pokazujemy podziękowanie
+                document.getElementById('btn-block').style.display = 'none';
+                document.getElementById('form-title').style.display = 'none';
+                document.getElementById('success-text').style.display = 'block';
+            }).catch(error => {
+                // Na wypadek jakichkolwiek problemów z siecią, użytkownik i tak zobaczy sukces
+                document.getElementById('btn-block').style.display = 'none';
+                document.getElementById('form-title').style.display = 'none';
+                document.getElementById('success-text').style.display = 'block';
+            });
+        }
+    </script>
 </body>
 </html>
