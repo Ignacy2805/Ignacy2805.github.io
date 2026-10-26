@@ -16,7 +16,7 @@
             height: 100%;
             margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            /* Piękne, jasne, niebieskie tło */
+            /* Jasne, niebieskie tło */
             background: linear-gradient(135deg, #e0f2fe, #bae6fd);
             display: flex;
             justify-content: center;
@@ -24,57 +24,27 @@
             padding: 20px;
         }
 
-        /* Elegancka biała karta na środku ekranu */
+        /* Biała karta na środku ekranu */
         .container {
             background: #ffffff;
-            padding: 40px;
+            padding: 30px;
             border-radius: 24px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
-            max-width: 550px;
+            max-width: 640px;
             width: 100%;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
-        h1 {
-            color: #0f172a;
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            line-height: 1.4;
-        }
-
-        p {
-            color: #475569;
-            font-size: 1.05rem;
-            margin-bottom: 35px;
-            line-height: 1.6;
-        }
-
-        /* Główny, duży przycisk do głosowania */
-        .vote-main-btn {
-            display: inline-block;
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: #ffffff;
-            font-size: 1.2rem;
-            font-weight: 700;
-            text-decoration: none;
-            padding: 18px 36px;
+        /* Twoja ankieta idealnie wtopiona w kartę */
+        iframe {
+            width: 100%;
+            height: 380px;
+            border: none;
             border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(29, 78, 216, 0.3);
-            transition: all 0.25s ease;
-            margin-bottom: 30px;
-            letter-spacing: 0.5px;
-        }
-
-        .vote-main-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 14px 30px rgba(29, 78, 216, 0.4);
-            background: linear-gradient(135deg, #2563eb, #1e40af);
-        }
-
-        .vote-main-btn:active {
-            transform: translateY(-1px);
+            margin-bottom: 20px;
         }
 
         /* Przycisk powrotu na stronę główną */
@@ -85,6 +55,7 @@
             font-size: 0.95rem;
             font-weight: 600;
             transition: color 0.2s ease;
+            padding: 5px 10px;
         }
 
         .back-link:hover {
@@ -95,15 +66,9 @@
 <body>
 
     <div class="container">
-        <h1>Akcja Anty Hejt</h1>
-        <p>Kliknij poniższy przycisk, aby odpowiedzieć na pytanie w bezpiecznej ankiecie.</p>
-        
-        <!-- Przycisk kierujący bezpośrednio do Twojego formularza Google -->
-        <a href="https://google.com" target="_blank" class="vote-main-btn">
-            KLIKNIJ, ABY ZAGŁOSOWAĆ
-        </a>
+        <!-- Prawidłowo osadzona Twoja ankieta Google -->
+        <iframe src="https://google.com">Ładowanie formularza...</iframe>
 
-        <br>
         <!-- Link powrotu na czarną stronę główną -->
         <a href="indeks.html" class="back-link">← Powrót do strony głównej</a>
     </div>
